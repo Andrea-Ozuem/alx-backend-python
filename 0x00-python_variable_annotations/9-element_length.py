@@ -6,4 +6,5 @@ from typing import Iterable, Sequence
 
 
 def element_length(lst: Iterable[Sequence]) -> List[Tuple[Sequence, int]]:
+    '''itearable annotation'''
     return [(i, len(i)) for i in lst]
