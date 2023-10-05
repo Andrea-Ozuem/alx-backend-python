@@ -2,7 +2,7 @@
 
 'a type-annotated function sum_mixed_list whichi'
 
-from typing import Iterable, Sequence
+from typing import Iterable, Sequence, Tuple, List
 
 
 def element_length(lst: Iterable[Sequence]) -> List[Tuple[Sequence, int]]:
