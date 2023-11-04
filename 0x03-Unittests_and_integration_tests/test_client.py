@@ -24,14 +24,13 @@ class TestGithubOrgClient(unittest.TestCase):
         mock.assert_called_once_with(obj.ORG_URL.format(org=name))
 
     @parameterized.expand([
-        ('google', {'repos_url': 'https://github.com/name/repo',
-                    'name': 'google'})
+        ('google', {'repos_url': 'https://github.com/name/repo'})
     ])
     def test_public_repos_url(self, name, result):
         '''method to unit-test GithubOrgClient._public_repos_url'''
         with patch('client.GithubOrgClient.org',
-                   new_callable=PropertyMock) as mock:
-            mock.return_value = result
+                   new_callable=PropertyMock) as mocke:
+            mocke.return_value = result
             self.assertEqual(GithubOrgClient(name)._public_repos_url,
                              result.get('repos_url'))
 
@@ -66,6 +65,7 @@ class TestGithubOrgClient(unittest.TestCase):
      'expected_repos': TEST_PAYLOAD[0][2], 'apache2_repos': TEST_PAYLOAD[0][3]}
 ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
+    '''Integration test for GithubOrgClient class'''
     @classmethod
     def setUpClass(cls):
         '''set up class'''
