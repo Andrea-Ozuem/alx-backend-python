@@ -69,19 +69,31 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''set up class'''
-        def side_effect(url):
+        def side_effect(*args):
             '''returns the correct fixtures for the various values of url'''
-            if url == 'https://api.github.com/orgs/google/repos':
+            if args[0] == 'https://api.github.com/orgs/google/repos':
                 return self.repos_payload
-            elif url == 'https://api.github.com/orgs/google':
+            elif args[0] == 'https://api.github.com/orgs/google':
                 return self.org_payload
         cls.get_patcher = patch('requests.get')
         mock_get = cls.get_patcher.start()
-        mock_res = Mock()
-        mock_res.json.side_effect = side_effect
-        mock_get.return_value = mock_res
+        mock_get.side_effect = [
+            Mock(json=lambda: cls.org_payload),
+            Mock(json=lambda: cls.repos_payload),
+            Mock(json=lambda: cls.org_payload),
+            Mock(json=lambda: cls.repos_payload)]
 
     @classmethod
     def tearDownClass(cls):
         '''tear down class'''
         cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        '''Test GithubOrgClient.public_repos'''
+        self.assertEqual(GithubOrgClient('google').public_repos(),
+                         self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        '''test the public_repos with the argument license="apache-2.0"'''
+        repo = GithubOrgClient('google').public_repos(license="apache-2.0")
+        self.assertEqual(repo, self.apache2_repos)
